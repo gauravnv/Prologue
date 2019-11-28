@@ -1,4 +1,4 @@
-/* <The name of this game>, by <your name goes here>. */
+/* Prologue, by <Gaurav, Nathan, and Ruperto>. */
 
 :- dynamic i_am_at/1, at/2, holding/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
@@ -22,7 +22,7 @@ take(X) :-
         retract(at(X, Place)),
         assert(holding(X)),
         write('OK.'),
-        !, nl.
+        !, nl. 
 
 take(_) :-
         write('I don''t see it here.'),
@@ -46,26 +46,21 @@ drop(_) :-
 
 /* These rules define the direction letters as calls to go/1. */
 
-n :- go(n).
+yes :- choice(yes).
 
-s :- go(s).
-
-e :- go(e).
-
-w :- go(w).
-
+no :- choice(no).
 
 /* This rule tells how to move in a given direction. */
 
-go(Direction) :-
+choice(Direction) :-
         i_am_at(Here),
         path(Here, Direction, There),
         retract(i_am_at(Here)),
         assert(i_am_at(There)),
         !, look.
 
-go(_) :-
-        write('You can''t go that way.').
+choice(_) :-
+        write('You can''t choose that.').
 
 
 /* This rule tells how to look about you. */
@@ -132,5 +127,81 @@ start :-
 /* These rules describe the various rooms.  Depending on
    circumstances, a room may have more than one description. */
 
-describe(someplace) :- write('You are someplace.'), nl.
+describe(beginning) :- 
+        write('The most dangerous moment in any story is the beginning.'), nl,
+        write('As the story opens, every ending is equally possible, every path unwalked, every question not only unanswered, but unasked.'), nl,
+        write('The unread story is infinite possibility. Yet the ending is already written, and though you be clever, though you be brave, there is no outwitting it.'), nl,
+        write('Are you brave enough to begin? If so, type "yes". If not, type "no". Halt this program and run it again. No one will think any less of you.'), nl.
 
+describe(garden) :- 
+        write('You find yourself standing in a beautiful garden. It teems with all the birds of the air, and all of the creatures of the Earth, and every good thing that grows. As you explore, you feel an incredible sense of peace and rightness, as if the garden had been created just for you.'), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+
+describe(beginning) :- 
+        write(''), nl.
+% Story branches you could take
+
+% Pg 0
+branch(beginning, yes, garden).
+branch(beginning, no, end).
+
+% Pg 1
+branch(garden, yes, gates).
+branch(garden, no, end).
+
+% Pg 37
+branch(gates, yes, sleep).
+branch(gates, no, no_sleep).
+
+% Pg 47
+branch(story, _, end).
+
+% Pg 25
+branch(no_sleep, yes, story).
+branch(no_sleep, no, no_story).
+
+% Pg 62
+branch(no_story, yes, dance).
+branch(no_story, no, no_dance).
+
+% Pg 72
+branch(no_dance, yes, look_back).
+branch(no_dance, no, no_look_back).
+
+% Pg 89
+branch(look_back, _, end).
+
+% Pg 114 
+branch(no_look_back, _, end).
+
+% Pg 56
+branch(dance, _, end).
+
+% Pg 3
+branch(sleep, _, end).
