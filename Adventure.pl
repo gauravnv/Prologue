@@ -114,8 +114,17 @@ choose(Choice) :-
 choose(_) :-
         write('You can''t choose that.').
 
+% directly go to somewhere
+goto(Place) :-
+        retract(i_am_at(_)),
+        assert(i_am_at(Place)),
+        !, look.
+
 /* These rules describe the various rooms.  Depending on
    circumstances, a room may have more than one description. */
+
+describe(yesOrNo) :-
+        write('Type "yes." or "no.".'), nl, nl.
 
 describe(beginning) :- 
         write('The most dangerous moment in any story is the beginning.'), nl, nl,
@@ -124,9 +133,8 @@ describe(beginning) :-
         write('The unread story is infinite possibility. Yet the ending is already'),
         write(' written, and though you be clever, though you be brave, there is no'),
         write(' outwitting it.'), nl, nl,
-        write('Are you brave enough to begin? If so, type "yes.". If not, type "no.".'),
-        write(' Halt this program and run it again. No one will think any less of'),
-        write(' you.'), nl, nl.
+        write('Are you brave enough to begin?'), nl, nl,
+        describe(yesOrNo).
 
 describe(garden) :- 
         write('You find yourself standing in a beautiful garden. It teems with all'),
@@ -137,7 +145,7 @@ describe(garden) :-
         write('This is the place you belong. Still, you are restless and lonely. You'),
         write(' begin to explore your surroundings. At the western edge of the garden,'),
         write(' there is a gate. Do you walk through?'), nl, nl,
-        write('Type "yes." or "no.".'), nl, nl.
+        describe(yesOrNo).
 
 describe(gates) :- 
         write('Gates, like books, are meant to be opened, and you would never be truly'),
@@ -156,14 +164,25 @@ describe(gates) :-
         write(' weary and your muscles ache.'), nl, nl,
         write('You crave sleep. A brief rest to fortify yourself for your journey.'),
         write(' Do you close your eyes?'), nl, nl,
-        write('Type "yes." or "no.".'), nl, nl.
+        describe(yesOrNo).
+
+describe(no_gates):-
+        write('You wish to see more of the garden before you leave its bounds. Soon, you'),
+        write(' are glad you have chosen as you did, for you find the perfect companion'),
+        write(' for all your days and nights. You come to believe you have found a new'),
+        write(' Eden, as well. It seems impossible for a place so perfect to be other than'),
+        write(' Paradise. When they are born, you name your children Kane and Abelle.'),
+        nl, nl,
+        write('This will prove to be a mistake.'), nl, nl,
+        goto(play_again).
 
 describe(sleep) :- 
         write('You close your eyes, and drift into sleep. When you awaken, you are in'),
         write(' your own bed. The previous events were a dream, which has already begun'),
         write(' to fade.'), nl, nl,
         write('You spend the rest of your life trying to return to the winding path in'),
-        write(' the dark forest. You never will.'), nl, nl.
+        write(' the dark forest. You never will.'), nl, nl,
+        goto(play_again).
 
 describe(no_sleep) :- 
         write('You scrub your hands across your eyes and push yourself back to your feet.'),
@@ -180,32 +199,65 @@ describe(no_sleep) :-
         write(' of your own. It is the tale, not the coin, that will pay your shelter for'),
         write(' the night.'), nl, nl,
         write('Do you tell a story?'), nl, nl,
-        write('Type "yes." or "no.".'), nl, nl.
+        describe(yesOrNo).
 
 describe(story) :- 
         write('You are warm and happy, and just drunk enough to think that telling a story'),
         write(' is something you can do. You invoke the muse, and she speaks through you.'),
         write(' When you finish, only the crackling of the fire breaks the silence. You'),
         write(' watch as, next to you, a single tear trickles down a perfect cheek.'), nl, nl,
-        write('It is the last story you will ever tell.'), nl, nl.
+        write('It is the last story you will ever tell.'), nl, nl,
+        goto(play_again).
 
 describe(no_story) :- 
-        write(''), nl.
+        write('The only story you know is your own, you say, and you must continue on to'),
+        write(' know how it ends. You make your excuses, and stand one more round before'),
+        write(' you leave to ensure there will be no hurt feelings, and, more importantly,'),
+        write(' no knives in the back as you walk through the door.'), nl, nl,
+        write('The air is crisp, and you are refreshed. The moon limns the trees in silver,'),
+        write(' and makes clear your path. You hear music, so beautiful that at first you'),
+        write(' wonder if you are dreaming. The pound of the drums speeds the pulse of your'),
+        write(' heart and the skirl of the strings pulls you through the night.'), nl, nl,
+        write('By the time you reach the standing stones, you are very nearly dancing down'),
+        write(' the path. Inside the ring of stones, the dancers spin and leap, a bright'),
+        write(' chaos of form and shape, carried along by an exultation of song.'), nl, nl,
+        write('You want, as you cannot remember wanting anything, to cross into the stone'),
+        write(' circle and join the dance. Do you?'), nl, nl,
+        describe(yesOrNo).
 
 describe(dance) :- 
-        write(''), nl.
+        write('As you step through the ring, every hair on your body stands as if'),
+        write(' electrified. Your feet begin to move in a complex pattern you were never'),
+        write(' taught, but now know in your blood.'), nl, nl,
+        write('You do not wish to ever stop dancing. It is unlikely you ever will.'), nl, nl,
+        goto(play_again).
 
+% bruuuuuuuuuuh this one is huge, what should we do. In general there's a lot of text in this story
+% we should either shorten it or change it
 describe(no_dance) :- 
-        write(''), nl.
+        write('TODO'), nl, nl.
 
 describe(look_back) :- 
-        write(''), nl.
+        write('You’ve been reading the alternate endings, haven’t you? Of course I know.'),
+        write(' I know everything that happens in all of the stories I hold.'), nl, nl,
+        write('Did you think I wouldn’t notice that you’re cheating?'), nl, nl,
+        write('Do you not understand that stories have rules?'), nl, nl,
+        write('You feel a pulling, and then are buffeted by a whirlwind. You hear'),
+        write(' something tear, feel a page come loose from your bindings.'), nl, nl,
+        write('You find yourself back at the beginning, holding a book.'), nl, nl,
+        write('You open the cover. Once upon a time.'), nl, nl,
+        goto(play_again).
 
 describe(no_look_back) :- 
-        write(''), nl.
+        write('You continue walking, three steps more. Then a hand slips into yours, and'),
+        write(' the story ends as all stories must: with the snip of a thread and the'),
+        write(' crossing of a river. You pay the ferryman with coins plucked from your'),
+        write(' own eyelids.'), nl, nl,
+        write('You pass beyond the realm of the page.'), nl, nl,
+        goto(play_again).
 
 describe(play_again) :- 
-        write('Do you want to play again? Type "yes." to continue or "halt." to stop'), nl, nl.
+        write('Do you want to play again? Type "yes." to continue or "halt." to quit'), nl, nl.
 
 % Story branches you could take
 
@@ -215,7 +267,10 @@ branch(beginning, no, play_again).
 
 % Pg 1
 branch(garden, yes, gates).
-branch(garden, no, play_again).
+branch(garden, no, no_gates).
+
+%pg 19
+branch(no_gates, _, play_again).
 
 % Pg 37
 branch(gates, yes, sleep).
