@@ -86,6 +86,8 @@ instructions :-
         write('look.              -- to look around you again.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
+        read(Hello),
+        assert(input(Hello)),
         nl.
 
 start :- instructions, look.
@@ -134,6 +136,8 @@ describe(beginning) :-
         write(' written, and though you be clever, though you be brave, there is no'),
         write(' outwitting it.'), nl, nl,
         write('Are you brave enough to begin?'), nl, nl,
+        input(Hello),
+        write(Hello),
         describe(yesOrNo).
 
 describe(garden) :- 
