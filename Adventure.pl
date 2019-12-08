@@ -2,7 +2,7 @@
 
 % ========================== stuff from boilerplate ========================= %
 
-:- dynamic i_am_at/1, at/2, holding/1.
+:- dynamic i_am_at/1, at/2, holding/1, nickname/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
 
 path(someplace, n, someplace).
@@ -113,7 +113,7 @@ choose(Choice) :-
         !, look.
 
 choose(_) :-
-        write('You can''t choose that.').
+        write('You can\'t choose that.').
 
 % directly go to somewhere
 goto(Place) :-
@@ -137,7 +137,6 @@ describe(newScene) :-
         write('===================================================='), nl, nl, nl.
 
 describe(beginning) :- 
-        % describe(newScene),
         nl,
         write('You are late for your rent and need money to pay for it.'),
         write(' Your friend Matt tells you there will be a rap battle tournament with a big prize soon.'), nl, nl,
@@ -158,7 +157,7 @@ describe(tournamentSignup) :-
         describe(input),
         read(Nickname),
         assert(nickname(Nickname)), nl,
-        write('>> BIG MIKE: Alright, '), write(Nickname), write(', you\'re all set. Your next battle is ... right now!'),
+        write('>> BIG MIKE: Alright, '), write(Nickname), write(', you\'re all set. Your next battle is ... right now! '),
         write('You will go against Too-pak!'), nl, nl,
         goto(firstBattle).
 
@@ -175,13 +174,54 @@ describe(noTournamentSignup) :-
 
 describe(firstBattle) :-
         describe(newScene),
-        % TODO: Too-pak's rhymes
-        % TODO: ask user for rhymes or fill in the blanks?
         nickname(Nickname),
+        assert(nickname(Nickname)),
+
+        % Ask user for rhymes or fill in the blanks Store the inputs
+        write('You feel yourself choke a little but you NEED to get that money'), nl, nl,
+        write('Enter a singular noun for a valuable object'), nl,
+        describe(input),
+        read(SingularValuableNoun),
+        assert(singularValuableNoun(SingularValuableNoun)), nl,
+        write('I ain\'t got a shiny new grill but got a heart of a '), write(SingularValuableNoun), nl,
+        write('Enter a new line that rhymes with previous one!'), nl,
+        read(NewDope1),
+        assert(newDope1(NewDope1)), nl,
+        write('Enter a positive adjective'), nl,
+        describe(input),
+        read(PositiveAdjective),
+        assert(positiveAdjective(PositiveAdjective)), nl,
+        write('Fudge the struggle, I been '), write(PositiveAdjective), nl,
+        write('Enter a new line that rhymes with previous one!'), nl,
+        read(NewDope2),
+        assert(newDope2(NewDope2)), nl, nl,
+        
+        % TODO: Too-pak's rhymes
+        write('>> Too-pak: You\'s a pop tart sweetheart, you soft in the middle'), nl,
+        write('I eat you for breakfast, the watch was exchanged for your necklace'), nl, 
+        write('What\'s funny '), 
+        write(Nickname), 
+        write(' really think you grimy too'), nl,
+        write('Now everybody liked you better in that shiny suit.'), nl, nl,
+
+        describe(newScene),
+        write('Everybody is going crazy and chanting "Too-pak!", "Too-pak!"'), nl,
+        write('You grab the mic and you begin...'), nl, nl,
+
+        % Character raps here
+        write('I ain\'t got a shiny new grill but got a heart full of '), write(SingularValuableNoun), nl,
+        write(NewDope1), nl,
+        write('Fudge the struggle, I been '), write(PositiveAdjective), nl,
+        write(NewDope2), nl, nl,
+
         write('You killed it! The audience is chanting "'), write(Nickname), write('! '),
         write(Nickname), write('! '), write(Nickname), write('!"'), nl, nl,
         write('Do you jump onto the audience?'), nl, nl,
         describe(yesOrNo).
+
+% describe(jump) :- .
+
+% describe(no_jump) :- .
 
 % TODO: remove/change these.
 describe(gates) :- 
@@ -298,8 +338,11 @@ branch(beginning, yes, tournamentSignup).
 branch(beginning, no, noTournamentSignup).
 
 % Pg 1
-branch(tournamentSignup, yes, gates).
+branch(tournamentSignup, yes, firstBattle).
 branch(tournamentSignup, no, no_gates).
+
+branch(firstBattle, yes, jump).
+branch(firstBattle, no, no_jump).
 
 % TODO: remove/change these
 
