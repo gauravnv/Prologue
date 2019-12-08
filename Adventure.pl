@@ -74,37 +74,36 @@ finish :-
 
 % ========================== stuff we've actually done ========================= %
 
-i_am_at(beginning).
 
-/* This rule just writes out game instructions. */
-
+/* Instructions ---- TODO: dont think we really need this? */
 instructions :-
         nl,
+        write('***************** INSTRUCTIONS *****************'),
         write('Enter commands using standard Prolog syntax.'), nl,
         write('Available commands are:'), nl,
         write('start.             -- to start the game.'), nl,
         write('look.              -- to look around you again.'), nl,
         write('instructions.      -- to see this message again.'), nl,
         write('halt.              -- to end the game and quit.'), nl,
-        read(Hello),
-        assert(input(Hello)),
         nl.
 
-start :- instructions, look.
+i_am_at(beginning).
 
-/* This rule tells how to look about you. */
+start :- look.
+
+/* describe where you're currently at */
 
 look :-
         i_am_at(Place),
         describe(Place).
 
-/* These rules define the direction letters as calls to go/1. */
+/* choice options */
 
 yes :- choose(yes).
 
 no :- choose(no).
 
-/* This rule tells how to move in a given direction. */
+/* moving from branch to branch */
 
 choose(Choice) :-
         i_am_at(Here),
@@ -122,35 +121,69 @@ goto(Place) :-
         assert(i_am_at(Place)),
         !, look.
 
-/* These rules describe the various rooms.  Depending on
-   circumstances, a room may have more than one description. */
+% Story
+describe(play_again) :- 
+        write('Do you want to play again? Type "yes." to continue or "halt." to quit'), nl, nl.
 
 describe(yesOrNo) :-
-        write('Type "yes." or "no.".'), nl, nl.
+        write('** Type "yes." or "no.".'), nl, nl.
+
+describe(input) :-
+        write('** Type your response surrounded by quotes and add a dot after the ending quote.'), nl, nl.
+
+describe(newScene) :-
+        %get0(_),
+        sleep(3),
+        write('===================================================='), nl, nl, nl.
 
 describe(beginning) :- 
-        write('The most dangerous moment in any story is the beginning.'), nl, nl,
-        write('As the story opens, every ending is equally possible, every path'),
-        write(' unwalked, every question not only unanswered, but unasked.'), nl, nl,
-        write('The unread story is infinite possibility. Yet the ending is already'),
-        write(' written, and though you be clever, though you be brave, there is no'),
-        write(' outwitting it.'), nl, nl,
-        write('Are you brave enough to begin?'), nl, nl,
-        input(Hello),
-        write(Hello),
+        % describe(newScene),
+        nl,
+        write('You are late for your rent and need money to pay for it.'),
+        write(' Your friend Matt tells you there will be a rap battle tournament with a big prize soon.'), nl, nl,
+        write('>> MATT: Yooo dude, check this out! There is a rap battle tournament with a $1k prize!'),
+        write(' You should sign up for it. What do you say?'), nl, nl,
+        write('What do you say to Matt?'), nl, nl,
         describe(yesOrNo).
 
-describe(garden) :- 
-        write('You find yourself standing in a beautiful garden. It teems with all'),
-        write(' the birds of the air, and all of the creatures of the Earth, and'),
-        write(' every good thing that grows. As you explore, you feel an incredible'),
-        write(' sense of peace and rightness, as if the garden had been created just'),
-        write(' for you.'), nl, nl,
-        write('This is the place you belong. Still, you are restless and lonely. You'),
-        write(' begin to explore your surroundings. At the western edge of the garden,'),
-        write(' there is a gate. Do you walk through?'), nl, nl,
+describe(tournamentSignup) :- 
+        nl,
+        write('>> YOU: Yeah I\'m down!'), nl, nl, 
+        describe(newScene),
+        write('You arrive at the tournament signup.'), nl, nl,
+        write('>> BIG MIKE: Hey punk. So you think you got what it takes to beat Vancouver\'s best rappers'),
+        write(' in a battle to the death?'), nl, nl,
+        write('>> YOU: Uhhhhhh... well I mean...'), nl, nl,
+        write('>> BIG MIKE: It\'s your funeral. Just hurry up and give me your nickname so I can sign you up.'), nl, nl,
+        describe(input),
+        read(Nickname),
+        assert(nickname(Nickname)), nl,
+        write('>> BIG MIKE: Alright, '), write(Nickname), write(', you\'re all set. Your next battle is ... right now!'),
+        write('You will go against Too-pak!'), nl, nl,
+        goto(firstBattle).
+
+describe(noTournamentSignup) :- 
+        nl,
+        write('What is your excuse?'), nl, nl,
+        describe(input),
+        read(Excuse), nl,
+        write('>> YOU: Nah, man. '), write(Excuse), nl, nl,
+        describe(newScene),
+        write('You end up not getting enough money for rent and get evicted.'),
+        write('Also, your girlfriend dumps you. Not signing up was a mistake.'), nl, nl,
+        goto(play_again).
+
+describe(firstBattle) :-
+        describe(newScene),
+        % TODO: Too-pak's rhymes
+        % TODO: ask user for rhymes or fill in the blanks?
+        nickname(Nickname),
+        write('You killed it! The audience is chanting "'), write(Nickname), write('! '),
+        write(Nickname), write('! '), write(Nickname), write('!"'), nl, nl,
+        write('Do you jump onto the audience?'), nl, nl,
         describe(yesOrNo).
 
+% TODO: remove/change these.
 describe(gates) :- 
         write('Gates, like books, are meant to be opened, and you would never be truly'),
         write(' content if you did not know what lay on the other side. You pass'),
@@ -236,8 +269,6 @@ describe(dance) :-
         write('You do not wish to ever stop dancing. It is unlikely you ever will.'), nl, nl,
         goto(play_again).
 
-% bruuuuuuuuuuh this one is huge, what should we do. In general there's a lot of text in this story
-% we should either shorten it or change it
 describe(no_dance) :- 
         write('TODO'), nl, nl.
 
@@ -260,18 +291,17 @@ describe(no_look_back) :-
         write('You pass beyond the realm of the page.'), nl, nl,
         goto(play_again).
 
-describe(play_again) :- 
-        write('Do you want to play again? Type "yes." to continue or "halt." to quit'), nl, nl.
-
 % Story branches you could take
 
 % Pg 0
-branch(beginning, yes, garden).
-branch(beginning, no, play_again).
+branch(beginning, yes, tournamentSignup).
+branch(beginning, no, noTournamentSignup).
 
 % Pg 1
-branch(garden, yes, gates).
-branch(garden, no, no_gates).
+branch(tournamentSignup, yes, gates).
+branch(tournamentSignup, no, no_gates).
+
+% TODO: remove/change these
 
 %pg 19
 branch(no_gates, _, play_again).
